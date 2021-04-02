@@ -1,7 +1,7 @@
 from tkinter import *
 
 root = Tk()
-root.title("Tic Tac Toe v.0.3")
+root.title("Tic Tac Toe v.0.4")
 root.geometry(f"400x480")
 
 #Functions:
@@ -101,43 +101,33 @@ def check():
         return "Friendship won!"
     else:
         pass
+
 def change_color(k, l, m):
     global lst, h
-    btn1 = Button(text = lst[k], padx = 60, pady = 50, bd = 2, bg = "yellow")
-    btn2 = Button(text = lst[l], padx = 60, pady = 50, bd = 2, bg = "yellow")
-    btn3 = Button(text = lst[m], padx = 60, pady = 50, bd = 2, bg = "yellow")
+    btn1 = Button(text = lst[k], padx = 60, pady = 50, bd = 1, bg = "yellow")
+    btn2 = Button(text = lst[l], padx = 60, pady = 50, bd = 1, bg = "yellow")
+    btn3 = Button(text = lst[m], padx = 60, pady = 50, bd = 1, bg = "yellow")
+    def btngrid(c1, c2, c3, r1, r2, r3):
+        btn1.grid(column=c1, row=r1)
+        btn2.grid(column=c2, row=r2)
+        btn3.grid(column=c3, row=r3)
     if h == 1:
-        btn1.grid(column=0, row=0)
-        btn2.grid(column=1, row=0)
-        btn3.grid(column=2, row=0)
+        btngrid(0, 1, 2, 0, 0, 0)
     elif h == 2:
-        btn1.grid(column=0, row=1)
-        btn2.grid(column=1, row=1)
-        btn3.grid(column=2, row=1)
+        btngrid(0, 1, 2, 1, 1, 1)
     elif h == 3:
-        btn1.grid(column=0, row=2)
-        btn2.grid(column=1, row=2)
-        btn3.grid(column=2, row=2)
+        btngrid(0, 1, 2, 2, 2, 2)
     elif h == 4:
-        btn1.grid(column=0, row=0)
-        btn2.grid(column=0, row=1)
-        btn3.grid(column=0, row=2)
+        btngrid(0, 0, 0, 0, 1, 2)
     elif h == 5:
-        btn1.grid(column=1, row=0)
-        btn2.grid(column=1, row=1)
-        btn3.grid(column=1, row=2)
+        btngrid(1, 1, 1, 0, 1, 2)
     elif h == 6:
-        btn1.grid(column=2, row=0)
-        btn2.grid(column=2, row=1)
-        btn3.grid(column=2, row=2)
+        btngrid(2, 2, 2, 0, 1, 2)
     elif h == 7:
-        btn1.grid(column=0, row=0)
-        btn2.grid(column=1, row=1)
-        btn3.grid(column=2, row=2)
+        btngrid(0, 1, 2, 0, 1, 2)
     else:
-        btn1.grid(column=0, row=2)
-        btn2.grid(column=1, row=1)
-        btn3.grid(column=2, row=0)
+        btngrid(0, 1, 2, 2, 1, 0)
+
 # Buttons
 button_1 = Button(text = " ", padx = 60, pady = 50, bd = 2, command = lambda: sign(1))
 button_2 = Button(text = " ", padx = 60, pady = 50, bd = 2, command = lambda: sign(2))
