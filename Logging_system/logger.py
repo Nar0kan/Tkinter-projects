@@ -58,17 +58,24 @@ def sign_up():
 
 # here we check from out txt file if user is already registered\ for login
 def login_user(user_info, top):
+    temp = 0
+    # open file
     loggins = open('loggins.txt', 'r')
     k = list(loggins.readlines())
     
-    if user_info == k:
-        messagebox.showinfo(title='Success', message='You are logged in as ' + user_info[0])
+    for i in range(0, len(k)-1, 1):
+        if user_info[0] == k[i] and user_info[1] == k[i+1]:
+            messagebox.showinfo(title='Success', message='You are logged in as ' + user_info[0])
 
-        # feature to show result on Main program window
-        My_label['text'] = " Hello, " + user_info[0]
-        My_label.grid(row = 2, column = 0, rowspan = 5)
-    else:
-        messagebox.showinfo(title = 'Problem', message = 'Your input isn\'t correct!')
+            # feature to show result on Main program window
+            My_label['text'] = " Hello, " + user_info[0]
+            My_label.grid(row = 2, column = 0, rowspan = 5)
+            temp += 1
+            break
+        else:
+            i+=1
+    if temp  != 1:
+        messagebox.showinfo(title = 'Problem', message = 'You have entered wrong password or login!')
         on_cancel(top)
     
     loggins.close()
@@ -76,29 +83,26 @@ def login_user(user_info, top):
 
 # here we will write a new user after we check if he is not existing\ for sign up
 def create_user(user_info, top):
-    global My_label
-
     # check if user exist
     loggins = open('loggins.txt', 'r')
     k = list(loggins.readlines())
     
-    if user_info == k:
-        messagebox.showerror(message = 'This user already exist.')
-        on_cancel(top)
+    for i in range(0, len(k)-1, 2):
+        if user_info[0] == k[i] and user_info[1] == k[i+1]:
+            messagebox.showerror(message = 'This user already exist.')
+            on_cancel(top)
+            return
 
     loggins.close()
 
     # and now we can add new user in our file
-    loggins = open('loggins.txt', 'w')
+    loggins = open('loggins.txt', 'a')
     line = str(user_info[0]) + str(user_info[1])
     loggins.writelines(line)
 
     # end process
     loggins.close()
     on_cancel(top)
-
-def clear_bar(bar):
-    bar.delete(1.0, END)
 
 # def for cancel button
 def on_cancel(top):
@@ -107,7 +111,6 @@ def on_cancel(top):
     sign_up_button['state'] = NORMAL
 
 # some initializations for the elements
-
 My_label.grid(row = 2, column = 0, rowspan = 5)
 
 log_button = Button(root, text = " Login ", padx = 20, pady = 10, fg = 'pink', bg = 'black', command = lambda: login())
@@ -115,4 +118,5 @@ sign_up_button = Button(root, text = " Sign up ", padx = 20, pady = 10, fg = 'pi
 
 log_button.grid(row = 1, column = 5, padx = 200, pady = 5)
 sign_up_button.grid(row = 0, column = 5, padx = 200, pady = 10)
+
 root.mainloop()
