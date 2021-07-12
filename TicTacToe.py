@@ -16,26 +16,13 @@ def sign(k):
     else:
         button = Button(text="0", padx=60, pady=50)
         lst[k-1] = "0"
-    if k <= 3:
-        button.grid()
-    if k == 1:
-        button.grid(column=0, row=0)
-    elif k == 2:
-        button.grid(column=1, row=0)
-    elif k == 3:
-        button.grid(column=2, row=0)
-    elif k == 4:
-        button.grid(column=0, row=1)
-    elif k == 5:
-        button.grid(column=1, row=1)
-    elif k == 6:
-        button.grid(column=2, row=1)
-    elif k == 7:
-        button.grid(column=0, row=2)
-    elif k == 8:
-        button.grid(column=1, row=2)
-    else:
-        button.grid(column=2, row=2)
+
+    # k_list stores inside all possible pos for buttons.grid(column , row) func
+    k_list = [[0, 0], [1, 0], [2, 0], [0, 1],
+              [1, 1], [2,1], [0,2], [1,2], [2,2]]
+
+    button.grid(column = k_list[k-1][0], row = k_list[k-1][1])
+
     t+=1
     print(check())
     return button
@@ -50,69 +37,49 @@ def clear():
     lst = [0, 1, 2, 3, 4, 5, 6, 7, 8]
 
 def check():
-    global lst, t, h
-    # check if 3 x's or o's are in one row to stop game
+    global lst, t
+    # check if 3 x's or o's are in one row to stop game | last digit in change_color is h - case of lst[] equality
     if lst[0] == lst[1] == lst[2]:
-        h = 1
-        change_color(0, 1, 2)
+        change_color(0, 1, 2, 1)
         return "Game over!"
     elif lst[3] == lst[4] == lst[5]:
-        h = 2
-        change_color(3, 4, 5)
+        change_color(3, 4, 5, 2)
         return "Game over!"
     elif lst[6] == lst[7] == lst[8]:
-        h = 3
-        change_color(6, 7, 8)
+        change_color(6, 7, 8, 3)
         return "Game over!"
     elif lst[0] == lst[3] == lst[6]:
-        h = 4
-        change_color(0, 3, 6)
+        change_color(0, 3, 6, 4)
         return "Game over!"
     elif lst[1] == lst[4] == lst[7]:
-        h = 5
-        change_color(1, 4, 7)
+        change_color(1, 4, 7, 5)
         return "Game over!"
     elif lst[2] == lst[5] == lst[8]:
-        h = 6
-        change_color(2, 5, 8)
+        change_color(2, 5, 8, 6)
         return "Game over!"
     elif lst[0] == lst[4] == lst[8]:
-        h = 7
-        change_color(0, 4, 8)
+        change_color(0, 4, 8, 7)
         return "Game over!"
     elif lst[2] == lst[4] == lst[6]:
-        h = 8
-        change_color(2, 4, 6)
+        change_color(2, 4, 6, 8)
         return "Game over!"
     elif t >= 9:
         clear()
         return "Friendship won!"
 
-def change_color(k, l, m):
-    global lst, h
+def change_color(k, l, m, h):
+    global lst
 
-    def btngrid(c1, c2, c3, r1, r2, r3):
-        btn1 = Button(text=lst[k], padx=60, pady=50, bd=1, bg="yellow").grid(column=c1, row=r1)
-        btn2 = Button(text=lst[l], padx=60, pady=50, bd=1, bg="yellow").grid(column=c2, row=r2)
-        btn3 = Button(text=lst[m], padx=60, pady=50, bd=1, bg="yellow").grid(column=c3, row=r3)
+    def btngrid(h_list):
+        btn1 = Button(text=lst[k], padx=60, pady=50, bd=1, bg="yellow").grid(column= h_list[0], row= h_list[3])
+        btn2 = Button(text=lst[l], padx=60, pady=50, bd=1, bg="yellow").grid(column= h_list[1], row= h_list[4])
+        btn3 = Button(text=lst[m], padx=60, pady=50, bd=1, bg="yellow").grid(column= h_list[2], row= h_list[5])
 
-    if h == 1:
-        btngrid(0, 1, 2, 0, 0, 0)
-    elif h == 2:
-        btngrid(0, 1, 2, 1, 1, 1)
-    elif h == 3:
-        btngrid(0, 1, 2, 2, 2, 2)
-    elif h == 4:
-        btngrid(0, 0, 0, 0, 1, 2)
-    elif h == 5:
-        btngrid(1, 1, 1, 0, 1, 2)
-    elif h == 6:
-        btngrid(2, 2, 2, 0, 1, 2)
-    elif h == 7:
-        btngrid(0, 1, 2, 0, 1, 2)
-    else:
-        btngrid(0, 1, 2, 2, 1, 0)
+    # here is used h_list to collect each of possible btngrid(c1 , c2, c3, r1, r2, r3) pos for buttons to highlight
+    h_list = [[0, 1, 2, 0, 0, 0], [0, 1, 2, 1, 1, 1], [0, 1, 2, 2, 2, 2], [0, 0, 0, 0, 1, 2],
+              [1, 1, 1, 0, 1, 2], [2, 2, 2, 0, 1, 2], [0, 1, 2, 0, 1, 2], [0, 1, 2, 2, 1, 0]]
 
+    btngrid(h_list[h-1])
 
 # Buttons initialization for main menu// here is functions bcs we need to call clear() func with the same commands
 def buttons_init(text, bd):
