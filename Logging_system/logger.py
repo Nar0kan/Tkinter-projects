@@ -86,7 +86,7 @@ class Not_logged_Menu(Verification):
         sign_up_button['state'] = DISABLED
 
 
-    def _geometry(self):
+    def _geometry(self, option):
         #from tkinter import TopLevel
         top = Toplevel(root)
         top.title('Login window')
@@ -101,35 +101,26 @@ class Not_logged_Menu(Verification):
         nickname.grid(row = 2, column = 2, pady = 13, padx = 5)
         password.grid(row = 4, column = 2, pady = 13, padx = 5)
 
-        return top, log_label, nickname, password
-
-    
-    def login(self):
-        #build geometry for new login window
-        self._set_buttons_state_disabled()
-        top, log_label, nickname, password = self._geometry()
-
         confirm_button = Button(log_label, width = 15, height = 2, text = "Confirm",
                                 command = lambda: Verification((nickname.get(1.0, 16.0), password.get(1.0, 20.0)), 
-                                top, 'login'))
+                                top, option))
         confirm_button.grid(row = 4, column = 1, pady = 15, padx = 5)
 
         cancel_button = Button(log_label, width=15, height=2, text="Cancel", command=lambda: self._on_cancel(top))
         cancel_button.grid(row=4, column=3, pady=15, padx=5)
 
 
-    def sign_up(self):
-        # build geometry for new sign up window
+    
+    def login(self):
+        # set buttons status disabled and build geometry for new login window, giving it an option
         self._set_buttons_state_disabled()
-        top, su_label, nickname, password = self._geometry()
+        self._geometry('login')
 
-        confirm_button = Button(su_label, width=15, height=2, text="Confirm",
-                                command=lambda: Verification((nickname.get(1.0, 16.0), password.get(1.0, 20.0)),
-                                 top, 'sign_up'))
-        confirm_button.grid(row=4, column=1, pady=15, padx=5)
 
-        cancel_button = Button(su_label, width=15, height=2, text="Cancel", command=lambda: self._on_cancel(top))
-        cancel_button.grid(row=4, column=3, pady=15, padx=5)
+    def sign_up(self):
+        # set buttons status disabled and build geometry for new sign up window, giving it an option
+        self._set_buttons_state_disabled()
+        self._geometry('sign_up')
 
 
 class Logged_Menu(Verification):

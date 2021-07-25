@@ -1,10 +1,2 @@
-ss
-aa
-ss
-aa
-aa
-aa
-ss
-ss
-ok
-kok
+admin
+password
