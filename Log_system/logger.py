@@ -2,6 +2,18 @@ from tkinter import *
 from tkinter import messagebox
 import sqlite3 as sq
 
+class CreateDB:
+    def __init__(self, path):
+        with sq.connect(path + "logins.db") as con:
+            cur = con.cursor()      # Cursor
+    
+            cur.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                name TEXT NOT NULL PRIMARY KEY,
+                password TEXT NOT NULL
+            )
+            """)
+
 
 # class for login/sign up
 class Verification:
@@ -117,8 +129,6 @@ class Not_Logged_Menu:
         else:
             Verification.sign_up(self)
 
-    
-
 
 class Logged_Menu:
     def __init__(self, user_info):
@@ -166,18 +176,6 @@ class Main:
         log_button.grid(row = 1, column = 5, padx = 200, pady = 5)
         sign_up_button.grid(row = 0, column = 5, padx = 200, pady = 10)
         root.mainloop()
-
-    # creating DB file
-    #def create_db(self):
-    #    with sq.connect("logins.db") as con:
-    #        cur = con.cursor()      # Cursor
-    #
-    #        cur.execute("""
-    #        CREATE TABLE IF NOT EXISTS users (
-    #            name TEXT NOT NULL PRIMARY KEY,
-    #            password TEXT NOT NULL
-    #        )
-    #        """)
 
 
 if __name__ == '__main__':
