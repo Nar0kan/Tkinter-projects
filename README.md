@@ -11,4 +11,4 @@ Log_System - it's my last project i made for better DataBase (SQLite) and OOP (i
 the most as this system was changing bit by bit to what it is now. However i think i might still custom Logged in menu and use some more
 features to add functionality to it in future.
 
-As you can see none of my project uses MVC-model. The reason is obvious :)
+PasswordGenerator - this project I created to try architect a settings window, files and some logic with OOP. The settings.json file have settings content inside, that will be used when the script is launched or during saving the settings. Now in progress.
