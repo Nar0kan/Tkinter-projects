@@ -41,7 +41,7 @@ class Menu():
         self.buildMainMenu()
     
 
-    """Select settings to load"""
+    """_________________________--------------------|Check settings and load methods|--------------------_________________________"""
 
     def checkControlSum(self) -> bool:
         if self.settings['controlSum'] == 0:
@@ -82,32 +82,20 @@ class Menu():
 
         self.useDigitsOption = bool(self.settings['useDigits'])
         self.PASSWORD.useDigits(self.useDigitsOption)
-
-    
-    """Main window elements"""
-
-    def loadSettingsButton(self) -> None:
-        self.settingsButton = ctk.CTkButton(self.root, text="Settings", command=self.openSettingsWindow, border_width=2, bg_color="#ddf4ff",\
-            fg_color="#2a2a2c")
-
-        self.settingsButton.grid(row=0, column=1, padx=5, pady=5, sticky=ctk.E)
     
     
-    def loadRetryButton(self) -> None:
-        self.retryButton = ctk.CTkButton(self.root, text="Generate new", command=self.retry, border_width=2, bg_color='#ddf4ff',\
-            fg_color="#2a2a2c", border_color="blue")
-        
-        self.retryButton.grid(row=2, column=1, padx=5, pady=5)
-    
+    def saveBUFFERSettings(self):
+        self.BUFFERwriteHistoryOption = self.writeHistoryOption
+        self.BUFFERpasswordLength = self.PASSWORD.length
+        self.BUFFERaddSymbols = self.addSymbols
+        self.BUFFERdelSymbols = self.delSymbols
+        self.BUFFERuseDigitsOption = self.useDigitsOption
 
-    def loadPasswordEntry(self) -> None:
-        self.passwordEntry = ctk.CTkEntry(self.root, width=600, textvariable=self.PASSWORD.password,\
-            text_font='arial', placeholder_text="center", border_width=2, border_color="pink")
-        
-        self.passwordEntry.grid(row=1, column=1, padx=10, pady=5, sticky=ctk.N)
-        self.passwordEntry.insert(0, self.PASSWORD.password)
+        self.BUFFERsettings = (self.BUFFERwriteHistoryOption, self.BUFFERpasswordLength,\
+            self.BUFFERaddSymbols, self.BUFFERdelSymbols, self.BUFFERuseDigitsOption)
 
-    """Settings buttons methods"""
+
+    """_________________________--------------------|Settings window elements methods|--------------------_________________________"""
     
     def exportPasswordHistory(self) -> None:
         filetypes = (('text files', '*.txt'), ('All files', '*.*'))
@@ -147,50 +135,60 @@ class Menu():
             self.writeHistoryOption = True
     
 
-    def setLength(self, value: int):
-        self.passwordLengthProgressbar.set(value)
-        self.PASSWORD.setLength(value)
+    def setLength(self, val: int):
+        self.passwordLengthProgressbar.set(value=val)
+        self.passwordLengthProgressbar.update()
+        self.PASSWORD.setLength(val)
+    
+    
+    def checkEntryValues(self):
+        symbols = self.addSymbolsEntry.get()
+        if symbols:
+            self.addSymbols = symbols
+            self.PASSWORD.addSymbols(symbols)
+
+        symbols = self.delSymbolsEntry.get()
+        if symbols:
+            self.delSymbols = symbols
+            self.PASSWORD.delSymbols(symbols)
 
     
-    """Settings Buttons"""
-    
-    def saveBUFFERSettings(self):
-        self.BUFFERwriteHistoryOption = self.writeHistoryOption
-        self.BUFFERpasswordLength = self.PASSWORD.length
-        self.BUFFERaddSymbols = self.addSymbols
-        self.BUFFERdelSymbols = self.delSymbols
-        self.BUFFERuseDigitsOption = self.useDigitsOption
+    """_________________________--------------------|Settings window buttons|--------------------_________________________"""
 
-        self.BUFFERsettings = (self.BUFFERwriteHistoryOption, self.BUFFERpasswordLength,\
-            self.BUFFERaddSymbols, self.BUFFERdelSymbols, self.BUFFERuseDigitsOption)
-
-
-    def exportHistoryButton(self):
-        self.historyButton = ctk.CTkButton(self.settingsWindow, text='Export Password History', command=self.exportPasswordHistory)
+    def loadExportHistoryButton(self):
+        self.historyButton = ctk.CTkButton(self.settingsFrame, text='Export password history', command=self.exportPasswordHistory)
         self.historyButton.pack()
     
 
     def loadPasswordLengthSlider(self):
-        self.passwordLengthSlider = ctk.CTkSlider(self.settingsWindow, from_=4, to=26, number_of_steps=24, command=self.PASSWORD.setLength)
-        self.passwordLengthSlider.place(relx=0.5, rely=0.5)
+        self.passwordLengthSlider = ctk.CTkSlider(self.settingsFrame, from_=4, to=26, number_of_steps=24, command=self.PASSWORD.setLength)
+        self.passwordLengthSlider.pack(pady=10, padx=10)
 
         self.passwordLengthSlider.set(self.PASSWORD.length)
-        self.passwordLengthProgressbar = ctk.CTkProgressBar(master=self.settingsWindow, width=160, height=20, border_width=5)
-        self.passwordLengthProgressbar.place(relx=0.5, rely=0.5)
+        self.passwordLengthProgressbar = ctk.CTkProgressBar(master=self.settingsFrame, width=160, height=20, border_width=5)
+        self.passwordLengthProgressbar.pack(pady=10, padx=10)
 
 
     def loadCheckboxes(self):
-        self.useDigitsCheckbox = ctk.CTkCheckBox(self.settingsWindow, text='Use digits', command=self.useDigits)
-        self.useDigitsCheckbox.place(relx=0.5, rely=0.5)
+        self.useDigitsCheckbox = ctk.CTkCheckBox(self.settingsFrame, text='Use digits', text_color="black", command=self.useDigits)
+        self.useDigitsCheckbox.pack(pady=10, padx=10)
         if "0123456789" in self.PASSWORD.alphabet:
             self.useDigitsCheckbox.select()
         
-        self.writeHistoryCheckbox = ctk.CTkCheckBox(self.settingsWindow, text='Write password history', command=self.writeHistory)
-        self.writeHistoryCheckbox.place(relx=0.5, rely=0.5)
+        self.writeHistoryCheckbox = ctk.CTkCheckBox(self.settingsFrame, text='Write password history', command=self.writeHistory)
+        self.writeHistoryCheckbox.pack(pady=10, padx=10)
         self.writeHistoryCheckbox.select(self.PASSWORD.history)
+
+    
+    def loadEntries(self):
+        self.addSymbolsEntry = ctk.CTkEntry(self.settingsFrame, placeholder_text="type symbols to add here: ")
+        self.addSymbolsEntry.pack(pady=5, padx=5)
+        self.delSymbolsEntry = ctk.CTkEntry(self.settingsFrame, placeholder_text="type symbols to delete here: ")
+        self.delSymbolsEntry.pack(pady=5, padx=5)
     
 
     def saveSettings(self):
+        self.checkEntryValues()
         self.settings['writeHistoryOption'] = bool(self.writeHistoryOption)
         self.settings['passwordLength'] = int(self.PASSWORD.length)
         self.settings['addSymbols'] = str(self.addSymbols)
@@ -242,23 +240,30 @@ class Menu():
         self.refresh()
     
 
-    """Main menu buttons methods"""
+    """_________________________--------------------|Main menu elements methods|--------------------_________________________"""
 
     def openSettingsWindow(self):
         self.saveBUFFERSettings()
         self.settingsWindow = Toplevel(self.root)
-        self.settingsWindow.geometry("620x300")
+        self.settingsWindow.geometry("620x420")
         self.settingsWindow.title("Settings")
+
+        self.settingsFrame = ctk.CTkFrame(self.settingsWindow, bg_color="gray", width=1800, height=300)
+        self.settingsFrame.pack()
         
         self.loadPasswordLengthSlider()
-        self.exportHistoryButton()
+        self.loadExportHistoryButton()
         self.loadCheckboxes()
-        self.saveChangedButton = ctk.CTkButton(self.settingsWindow, text='Save changes', command=self.saveSettings)
-        self.saveChangedButton.pack()
-        self.abortChangedButton = ctk.CTkButton(self.settingsWindow, text='Abort changes', command=self.abortSettings)
-        self.abortChangedButton.pack()
-        self.useDefaultButton = ctk.CTkButton(self.settingsWindow, text='Default', command=self.useDefaultSettings)
-        self.useDefaultButton.pack()
+        self.loadEntries()
+
+        self.settingsBackFrame = ctk.CTkFrame(self.settingsWindow, bg_color="black", width=500, height=600)
+        self.settingsBackFrame.pack()
+        self.saveChangedButton = ctk.CTkButton(self.settingsBackFrame, text='Save', command=self.saveSettings)
+        self.saveChangedButton.pack(padx=10, pady=620)
+        self.abortChangedButton = ctk.CTkButton(self.settingsBackFrame, text='Cancel', command=self.abortSettings)
+        self.abortChangedButton.pack(padx=10, pady=5)
+        self.useDefaultButton = ctk.CTkButton(self.settingsBackFrame, text='Default', command=self.useDefaultSettings)
+        self.useDefaultButton.pack(padx=10, pady=5)
 
         self.settingsWindow.resizable(False, False)
         self.settingsWindow.mainloop()
@@ -268,9 +273,50 @@ class Menu():
         self.passwordHistory.append(self.PASSWORD.password)
         self.PASSWORD.generatePassword()
         self.loadPasswordEntry()
+    
+    
+    """_________________________--------------------|Main window elements|--------------------_________________________"""
+
+    def loadSettingsButton(self) -> None:
+        self.settingsButton = ctk.CTkButton(self.root, text="Settings", command=self.openSettingsWindow,\
+            border_width=2, bg_color="#ddf4ff", fg_color="#2a2a2c")
+
+        self.settingsButton.grid(row=0, column=1, padx=5, pady=5, sticky=ctk.E)
+    
+    
+    def loadRetryButton(self) -> None:
+        self.retryButton = ctk.CTkButton(self.root, text="Generate new", command=self.retry, border_width=2, bg_color='#ddf4ff',\
+            fg_color="#2a2a2c", border_color="blue")
+        
+        self.retryButton.grid(row=2, column=1, padx=5, pady=5)
+    
+
+    def loadPasswordEntry(self) -> None:
+        self.passwordEntry = ctk.CTkEntry(self.root, width=600, textvariable=self.PASSWORD.password,\
+            text_font='arial', placeholder_text="password", border_width=2, border_color="pink")
+        
+        self.passwordEntry.grid(row=1, column=1, padx=10, pady=5, sticky=ctk.N)
+        self.passwordEntry.insert(0, self.PASSWORD.password)
 
 
-    """Function to display everything"""
+    """_________________________--------------------|Menu display|--------------------_________________________"""
+
+    def buildMainMenu(self) -> None:
+        ctk.set_appearance_mode("Dark")
+
+        self.root = ctk.CTk()
+        self.root.title("PassGen 0.3")
+        self.root.geometry("620x120")
+        self.root.iconbitmap("pglogo2.png")
+
+        self.loadSettingsButton()
+        self.loadRetryButton()
+        self.loadPasswordEntry()
+
+        self.root.resizable(False, False)
+        self.root.mainloop()
+    
+
     def refresh(self) -> None:
         self.settingsWindow.destroy()
         self.root.destroy()
@@ -280,22 +326,6 @@ class Menu():
         
         self.checkControlSum()
         self.buildMainMenu()
-
-
-    def buildMainMenu(self) -> None:
-        ctk.set_appearance_mode("Dark")
-
-        self.root = ctk.CTk()
-        self.root.title("PassGen 0.3")
-        self.root.geometry("620x180")
-        self.root.iconbitmap("pglogo2.png")
-
-        self.loadSettingsButton()
-        self.loadRetryButton()
-        self.loadPasswordEntry()
-
-        self.root.resizable(False, False)
-        self.root.mainloop()
 
 
 class PasswordGenerator:
