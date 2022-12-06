@@ -2,7 +2,7 @@ from random import choice, shuffle                                  # Build-in r
 #from pyperclip import copy, paste                                  # External copy to clipboard lib
 import customtkinter as ctk                                         # External GUI lib
 import json                                                         # For operations with settings.json file
-from tkinter import filedialog as fd, Toplevel
+from tkinter import filedialog as fd, Toplevel, PhotoImage
 from tkinter.messagebox import showinfo
 
 
@@ -136,8 +136,7 @@ class Menu():
     
 
     def setLength(self, val: int):
-        self.passwordLengthProgressbar.set(value=val)
-        self.passwordLengthProgressbar.update()
+        self.passwordLengthProgressbar.set(val/24-1/8)
         self.PASSWORD.setLength(val)
     
     
@@ -161,11 +160,12 @@ class Menu():
     
 
     def loadPasswordLengthSlider(self):
-        self.passwordLengthSlider = ctk.CTkSlider(self.settingsFrame, from_=4, to=26, number_of_steps=24, command=self.PASSWORD.setLength)
+        self.passwordLengthSlider = ctk.CTkSlider(self.settingsFrame, from_=4, to=26, number_of_steps=24, command=self.setLength)
         self.passwordLengthSlider.pack(pady=10, padx=10)
-
         self.passwordLengthSlider.set(self.PASSWORD.length)
+
         self.passwordLengthProgressbar = ctk.CTkProgressBar(master=self.settingsFrame, width=160, height=20, border_width=5)
+        self.passwordLengthProgressbar.set(self.PASSWORD.length/24-1/7)
         self.passwordLengthProgressbar.pack(pady=10, padx=10)
 
 
@@ -185,6 +185,15 @@ class Menu():
         self.addSymbolsEntry.pack(pady=5, padx=5)
         self.delSymbolsEntry = ctk.CTkEntry(self.settingsFrame, placeholder_text="type symbols to delete here: ")
         self.delSymbolsEntry.pack(pady=5, padx=5)
+    
+
+    def loadOptionsButton(self):
+        self.saveChangedButton = ctk.CTkButton(master=self.backFrame, text='Save', command=self.saveSettings)
+        self.saveChangedButton.pack(padx=10, pady=10)
+        self.abortChangedButton = ctk.CTkButton(master=self.backFrame, text='Cancel', command=self.abortSettings)
+        self.abortChangedButton.pack(padx=10, pady=5)
+        self.useDefaultButton = ctk.CTkButton(master=self.backFrame, text='Default', command=self.useDefaultSettings)
+        self.useDefaultButton.pack(padx=10, pady=5)
     
 
     def saveSettings(self):
@@ -244,26 +253,22 @@ class Menu():
 
     def openSettingsWindow(self):
         self.saveBUFFERSettings()
-        self.settingsWindow = Toplevel(self.root)
+        self.settingsWindow = Toplevel()
         self.settingsWindow.geometry("620x420")
         self.settingsWindow.title("Settings")
 
-        self.settingsFrame = ctk.CTkFrame(self.settingsWindow, bg_color="gray", width=1800, height=300)
-        self.settingsFrame.pack()
+        self.nonUseFrame = ctk.CTkFrame(self.settingsWindow, bg_color="black", width=150, height=150)
+        self.nonUseFrame.pack(anchor=ctk.N, fill=ctk.BOTH, expand=True, side=ctk.TOP)
+        self.backFrame = ctk.CTkFrame(self.nonUseFrame, bg_color="gray", width=60, height=150)
+        self.backFrame.pack(anchor=ctk.S, fill=ctk.Y, expand=True, side=ctk.BOTTOM)
+        self.settingsFrame = ctk.CTkFrame(self.backFrame, bg_color="yellow", width=200, height=280, border_width=2)
+        self.settingsFrame.pack(anchor=ctk.N, fill=ctk.BOTH, expand=False, side=ctk.TOP)
         
         self.loadPasswordLengthSlider()
         self.loadExportHistoryButton()
         self.loadCheckboxes()
         self.loadEntries()
-
-        self.settingsBackFrame = ctk.CTkFrame(self.settingsWindow, bg_color="black", width=500, height=600)
-        self.settingsBackFrame.pack()
-        self.saveChangedButton = ctk.CTkButton(self.settingsBackFrame, text='Save', command=self.saveSettings)
-        self.saveChangedButton.pack(padx=10, pady=620)
-        self.abortChangedButton = ctk.CTkButton(self.settingsBackFrame, text='Cancel', command=self.abortSettings)
-        self.abortChangedButton.pack(padx=10, pady=5)
-        self.useDefaultButton = ctk.CTkButton(self.settingsBackFrame, text='Default', command=self.useDefaultSettings)
-        self.useDefaultButton.pack(padx=10, pady=5)
+        self.loadOptionsButton()
 
         self.settingsWindow.resizable(False, False)
         self.settingsWindow.mainloop()
