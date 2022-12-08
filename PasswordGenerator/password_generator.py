@@ -1,5 +1,5 @@
 from random import choice, shuffle                                  # Build-in random lib
-#from pyperclip import copy, paste                                  # External copy to clipboard lib
+#from pyperclip import copy, paste                                   # External copy to clipboard lib
 import customtkinter as ctk                                         # External GUI lib
 import json                                                         # For operations with settings.json file
 from tkinter import filedialog as fd, Toplevel, PhotoImage
@@ -7,12 +7,12 @@ from tkinter.messagebox import showinfo
 
 
 class Menu():
+    """Menu class to implement GUI with PasswordGenerator class object"""
     programStatusInfo = {
         0: "Everything is up-to date", 
         1: "New changes to update", 
         2: "Unexpected bug found"
         }
-
 
     def __init__(self) -> None:
         self.PASSWORD = PasswordGenerator()
@@ -35,7 +35,7 @@ class Menu():
         self.PASSWORD.generatePassword()
 
 
-    def runProgram(self) -> bool:
+    def runProgram(self) -> None:
         """Use this method to build up program."""
         self.checkControlSum()
         self.buildMainMenu()
@@ -43,7 +43,7 @@ class Menu():
 
     """_________________________--------------------|Check settings and load methods|--------------------_________________________"""
 
-    def checkControlSum(self) -> bool:
+    def checkControlSum(self) -> None:
         if self.settings['controlSum'] == 0:
             self.controlSum = 0
             self.loadDefaultSettings()
@@ -52,7 +52,7 @@ class Menu():
             self.loadUserSettings()
     
 
-    def loadDefaultSettings(self):
+    def loadDefaultSettings(self) -> None:
         self.writeHistoryOption = True
         self.PASSWORD.writeHistory(self.writeHistoryOption)
 
@@ -68,7 +68,7 @@ class Menu():
         self.PASSWORD.useDigits(self.useDigitsOption)
     
     
-    def loadUserSettings(self):
+    def loadUserSettings(self) -> None:
         self.writeHistoryOption = bool(self.settings['writeHistoryOption'])
         self.PASSWORD.writeHistory(self.writeHistoryOption)
 
@@ -84,7 +84,7 @@ class Menu():
         self.PASSWORD.useDigits(self.useDigitsOption)
     
     
-    def saveBUFFERSettings(self):
+    def saveBUFFERSettings(self) -> None:
         self.BUFFERwriteHistoryOption = self.writeHistoryOption
         self.BUFFERpasswordLength = self.PASSWORD.length
         self.BUFFERaddSymbols = self.addSymbols
@@ -95,7 +95,7 @@ class Menu():
             self.BUFFERaddSymbols, self.BUFFERdelSymbols, self.BUFFERuseDigitsOption)
 
 
-    """_________________________--------------------|Settings window elements methods|--------------------_________________________"""
+    """_________________________--------------------|Settings window element methods|--------------------_________________________"""
     
     def exportPasswordHistory(self) -> None:
         filetypes = (('text files', '*.txt'), ('All files', '*.*'))
@@ -109,38 +109,41 @@ class Menu():
         
         try:
             with open(self.messageFilename, 'a') as f:
-                for pswd in self.PASSWORD.passwordHistory:
-                    f.writelines(pswd)
+                f.writelines(self.PASSWORD.getHistory())
 
             showinfo(title='Success!', message=f'File have been successfully saved as a {self.messageFilename}')
         except FileNotFoundError:
             showinfo(title='Error!', message=f'File "{self.messageFilename}" has not been found. Please try again!')
     
 
-    def useDigits(self):
+    def useDigits(self) -> None:
         if self.useDigitsCheckbox.get() == 0:
             self.PASSWORD.useDigits(False)
             self.useDigitsOption = False
         elif self.useDigitsCheckbox.get() == 1:
             self.PASSWORD.useDigits(True)
             self.useDigitsOption = True
+        else:
+            raise AttributeError
     
 
-    def writeHistory(self):
+    def writeHistory(self) -> None:
         if self.writeHistoryCheckbox.get() == 0:
             self.PASSWORD.writeHistory(False)
             self.writeHistoryOption = False
-        else:
+        elif self.writeHistoryCheckbox.get() == 1:
             self.PASSWORD.writeHistory(True)
             self.writeHistoryOption = True
+        else:
+            raise AttributeError
     
 
-    def setLength(self, val: int):
+    def setLength(self, val: int) -> None:
         self.passwordLengthProgressbar.set(val/24-1/8)
         self.PASSWORD.setLength(val)
     
     
-    def checkEntryValues(self):
+    def checkEntryValues(self) -> None:
         symbols = self.addSymbolsEntry.get()
         if symbols:
             self.addSymbols = symbols
@@ -154,12 +157,12 @@ class Menu():
     
     """_________________________--------------------|Settings window buttons|--------------------_________________________"""
 
-    def loadExportHistoryButton(self):
+    def loadExportHistoryButton(self) -> None:
         self.historyButton = ctk.CTkButton(self.settingsFrame, text='Export password history', command=self.exportPasswordHistory)
         self.historyButton.pack()
     
 
-    def loadPasswordLengthSlider(self):
+    def loadPasswordLengthSlider(self) -> None:
         self.passwordLengthSlider = ctk.CTkSlider(self.settingsFrame, from_=4, to=26, number_of_steps=24, command=self.setLength)
         self.passwordLengthSlider.pack(pady=10, padx=10)
         self.passwordLengthSlider.set(self.PASSWORD.length)
@@ -169,7 +172,7 @@ class Menu():
         self.passwordLengthProgressbar.pack(pady=10, padx=10)
 
 
-    def loadCheckboxes(self):
+    def loadCheckboxes(self) -> None:
         self.useDigitsCheckbox = ctk.CTkCheckBox(self.settingsFrame, text='Use digits', text_color="black", command=self.useDigits)
         self.useDigitsCheckbox.pack(pady=10, padx=10)
         if "0123456789" in self.PASSWORD.alphabet:
@@ -177,26 +180,29 @@ class Menu():
         
         self.writeHistoryCheckbox = ctk.CTkCheckBox(self.settingsFrame, text='Write password history', command=self.writeHistory)
         self.writeHistoryCheckbox.pack(pady=10, padx=10)
-        self.writeHistoryCheckbox.select(self.PASSWORD.history)
+        if self.PASSWORD.history:
+            self.writeHistoryCheckbox.select()
 
     
-    def loadEntries(self):
+    def loadEntries(self) -> None:
         self.addSymbolsEntry = ctk.CTkEntry(self.settingsFrame, placeholder_text="type symbols to add here: ")
         self.addSymbolsEntry.pack(pady=5, padx=5)
         self.delSymbolsEntry = ctk.CTkEntry(self.settingsFrame, placeholder_text="type symbols to delete here: ")
         self.delSymbolsEntry.pack(pady=5, padx=5)
     
 
-    def loadOptionsButton(self):
+    def loadOptionsButton(self) -> None:
         self.saveChangedButton = ctk.CTkButton(master=self.backFrame, text='Save', command=self.saveSettings)
         self.saveChangedButton.pack(padx=10, pady=10)
         self.abortChangedButton = ctk.CTkButton(master=self.backFrame, text='Cancel', command=self.abortSettings)
         self.abortChangedButton.pack(padx=10, pady=5)
         self.useDefaultButton = ctk.CTkButton(master=self.backFrame, text='Default', command=self.useDefaultSettings)
         self.useDefaultButton.pack(padx=10, pady=5)
-    
 
-    def saveSettings(self):
+
+    """_________________________--------------------|Settings overall methods|--------------------_________________________"""
+
+    def saveSettings(self) -> None:
         self.checkEntryValues()
         self.settings['writeHistoryOption'] = bool(self.writeHistoryOption)
         self.settings['passwordLength'] = int(self.PASSWORD.length)
@@ -214,7 +220,7 @@ class Menu():
         self.refresh()
     
 
-    def abortSettings(self):
+    def abortSettings(self) -> None:
         self.settings['writeHistoryOption'] = bool(self.BUFFERwriteHistoryOption)
         self.settings['passwordLength'] = int(self.BUFFERpasswordLength)
         self.settings['addSymbols'] = str(self.BUFFERaddSymbols)
@@ -229,7 +235,7 @@ class Menu():
         self.refresh()
 
 
-    def useDefaultSettings(self):
+    def useDefaultSettings(self) -> None:
         self.loadDefaultSettings()
         self.settings = {
             'controlSum': 0,
@@ -334,6 +340,7 @@ class Menu():
 
 
 class PasswordGenerator:
+    """Specific class to be called methods from for password specification changes and operations with it"""
     def __init__(self, length: int=12, alphabet: str="", addDigits: bool=True, otherSymbols: str="") -> None:
         self.length = length
 
@@ -365,13 +372,13 @@ class PasswordGenerator:
         self.length = newLength
     
 
-    def addSymbols(self, symbols) -> None:
+    def addSymbols(self, symbols: str) -> None:
         for symbol in symbols:
             if symbol not in self.alphabet:
                 self.alphabet += symbols
     
 
-    def delSymbols(self, symbols) -> None:
+    def delSymbols(self, symbols: str) -> None:
         for symbol in symbols:
             if symbol in self.alphabet:
                 self.alphabet = self.alphabet[0:self.alphabet.find(symbol)] + self.alphabet[self.alphabet.find(symbol)+1:]
@@ -386,6 +393,10 @@ class PasswordGenerator:
     
     def writeHistory(self, option: bool=True) -> None:
         self.history = option
+    
+
+    def getHistory(self) -> str:
+        return '\n'.join([password for password in self.passwordHistory])
 
 
 def main() -> None:
