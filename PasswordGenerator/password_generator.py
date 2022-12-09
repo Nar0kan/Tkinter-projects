@@ -1,5 +1,5 @@
 from random import choice, shuffle                                  # Build-in random lib
-#from pyperclip import copy, paste                                   # External copy to clipboard lib
+from pyperclip import copy                                          # External copy to clipboard lib
 import customtkinter as ctk                                         # External GUI lib
 import json                                                         # For operations with settings.json file
 from tkinter import filedialog as fd, Toplevel, PhotoImage
@@ -55,6 +55,9 @@ class Menu():
     def loadDefaultSettings(self) -> None:
         self.writeHistoryOption = True
         self.PASSWORD.writeHistory(self.writeHistoryOption)
+        
+        self.useClipboard = True
+        self.PASSWORD.useClipboard(self.useClipboard)
 
         self.PASSWORD.setLength(12)
 
@@ -72,6 +75,9 @@ class Menu():
         self.writeHistoryOption = bool(self.settings['writeHistoryOption'])
         self.PASSWORD.writeHistory(self.writeHistoryOption)
 
+        self.useClipboard = bool(self.settings['useClipboard'])
+        self.PASSWORD.useClipboard(self.useClipboard)
+
         self.PASSWORD.setLength(self.settings['passwordLength'])
 
         self.addSymbols = str(self.settings['addSymbols'])
@@ -86,6 +92,7 @@ class Menu():
     
     def saveBUFFERSettings(self) -> None:
         self.BUFFERwriteHistoryOption = self.writeHistoryOption
+        self.BUFFERuseClipboard = self.useClipboard
         self.BUFFERpasswordLength = self.PASSWORD.length
         self.BUFFERaddSymbols = self.addSymbols
         self.BUFFERdelSymbols = self.delSymbols
@@ -136,6 +143,17 @@ class Menu():
             self.writeHistoryOption = True
         else:
             raise AttributeError
+        
+    
+    def copyToClipboard(self) -> None:
+        if self.clipboardCheckbox.get() == 0:
+            self.PASSWORD.useClipboard(False)
+            self.useClipboard = False
+        elif self.clipboardCheckbox.get() == 1:
+            self.PASSWORD.useClipboard(True)
+            self.useClipboard = True
+        else:
+            raise AttributeError
     
 
     def setLength(self, val: int) -> None:
@@ -182,6 +200,11 @@ class Menu():
         self.writeHistoryCheckbox.pack(pady=10, padx=10)
         if self.PASSWORD.history:
             self.writeHistoryCheckbox.select()
+        
+        self.clipboardCheckbox = ctk.CTkCheckBox(self.settingsFrame, text='Copy to clipboard', command=self.copyToClipboard)
+        self.clipboardCheckbox.pack(pady=10, padx=10)
+        if self.useClipboard:
+            self.clipboardCheckbox.select()
 
     
     def loadEntries(self) -> None:
@@ -205,6 +228,7 @@ class Menu():
     def saveSettings(self) -> None:
         self.checkEntryValues()
         self.settings['writeHistoryOption'] = bool(self.writeHistoryOption)
+        self.settings['useClipboard'] = bool(self.useClipboard)
         self.settings['passwordLength'] = int(self.PASSWORD.length)
         self.settings['addSymbols'] = str(self.addSymbols)
         self.settings['delSymbols'] = str(self.delSymbols)
@@ -222,6 +246,7 @@ class Menu():
 
     def abortSettings(self) -> None:
         self.settings['writeHistoryOption'] = bool(self.BUFFERwriteHistoryOption)
+        self.settings['useClipboard'] = bool(self.BUFFERuseClipboard)
         self.settings['passwordLength'] = int(self.BUFFERpasswordLength)
         self.settings['addSymbols'] = str(self.BUFFERaddSymbols)
         self.settings['delSymbols'] = str(self.BUFFERdelSymbols)
@@ -240,6 +265,7 @@ class Menu():
         self.settings = {
             'controlSum': 0,
             'writeHistory': True,
+            'useClipboard': True,
             'passwordLength': 12,
             'addSymbols': '',
             'delSymbols': '',
@@ -355,6 +381,7 @@ class PasswordGenerator:
         self.alphabet += otherSymbols
         self.passwordHistory = []
         self.writeHistory()
+        self.useClipboard()
 
 
     def generatePassword(self) -> str:
@@ -364,6 +391,9 @@ class PasswordGenerator:
         
         if self.history:
             self.passwordHistory.append(self.password)
+        
+        if self.clipboard:
+            copy(self.password)
         
         return self.password
 
@@ -397,6 +427,10 @@ class PasswordGenerator:
 
     def getHistory(self) -> str:
         return '\n'.join([password for password in self.passwordHistory])
+    
+
+    def useClipboard(self, option: bool=True) -> None:
+        self.clipboard = option
 
 
 def main() -> None:
