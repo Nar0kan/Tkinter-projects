@@ -208,15 +208,15 @@ class Menu():
 
     
     def loadEntries(self) -> None:
-        self.addSymbolsEntry = ctk.CTkEntry(self.settingsFrame, placeholder_text="type symbols to add here: ")
-        self.addSymbolsEntry.pack(pady=5, padx=5)
-        self.delSymbolsEntry = ctk.CTkEntry(self.settingsFrame, placeholder_text="type symbols to delete here: ")
-        self.delSymbolsEntry.pack(pady=5, padx=5)
+        self.addSymbolsEntry = ctk.CTkEntry(self.settingsFrame, placeholder_text="type symbols to add")
+        self.addSymbolsEntry.pack(pady=5, padx=2)
+        self.delSymbolsEntry = ctk.CTkEntry(self.settingsFrame, placeholder_text="type symbols to delete")
+        self.delSymbolsEntry.pack(pady=5, padx=2)
     
 
     def loadOptionsButton(self) -> None:
         self.saveChangedButton = ctk.CTkButton(master=self.backFrame, text='Save', command=self.saveSettings)
-        self.saveChangedButton.pack(padx=10, pady=10)
+        self.saveChangedButton.pack(padx=10, pady=5)
         self.abortChangedButton = ctk.CTkButton(master=self.backFrame, text='Cancel', command=self.abortSettings)
         self.abortChangedButton.pack(padx=10, pady=5)
         self.useDefaultButton = ctk.CTkButton(master=self.backFrame, text='Default', command=self.useDefaultSettings)
@@ -286,7 +286,7 @@ class Menu():
     def openSettingsWindow(self):
         self.saveBUFFERSettings()
         self.settingsWindow = Toplevel()
-        self.settingsWindow.geometry("620x420")
+        self.settingsWindow.geometry("520x450")
         self.settingsWindow.title("Settings")
 
         self.nonUseFrame = ctk.CTkFrame(self.settingsWindow, bg_color="black", width=150, height=150)
@@ -294,7 +294,7 @@ class Menu():
         self.backFrame = ctk.CTkFrame(self.nonUseFrame, bg_color="gray", width=60, height=150)
         self.backFrame.pack(anchor=ctk.S, fill=ctk.Y, expand=True, side=ctk.BOTTOM)
         self.settingsFrame = ctk.CTkFrame(self.backFrame, bg_color="yellow", width=200, height=280, border_width=2)
-        self.settingsFrame.pack(anchor=ctk.N, fill=ctk.BOTH, expand=False, side=ctk.TOP)
+        self.settingsFrame.pack(pady=10, anchor=ctk.N, fill=ctk.BOTH, expand=False, side=ctk.TOP)
         
         self.loadPasswordLengthSlider()
         self.loadExportHistoryButton()
