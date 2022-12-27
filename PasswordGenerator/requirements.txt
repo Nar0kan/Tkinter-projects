@@ -1,3 +1,9 @@
-customtkinter~=4.6.3
-darkdetect~=0.7.1
-pip~=22.3.1
+altgraph==0.17.3
+customtkinter==4.6.3
+darkdetect==0.7.1
+future==0.18.2
+pefile==2022.5.30
+pyinstaller==5.7.0
+pyinstaller-hooks-contrib==2022.14
+pyperclip==1.8.2
+pywin32-ctypes==0.2.0
